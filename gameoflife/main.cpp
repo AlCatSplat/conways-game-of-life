@@ -12,6 +12,8 @@ int main() {
 	const int X_SIZE = 30;
 	const int Y_SIZE = 30;
 
+	std::cout << "Hello!";
+
 	int cells[X_SIZE][Y_SIZE];
 
 	readFromFile(cells[X_SIZE][Y_SIZE], X_SIZE, Y_SIZE);
