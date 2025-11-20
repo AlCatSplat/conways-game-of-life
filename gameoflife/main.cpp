@@ -18,25 +18,27 @@ const int YEARS_MAX = 30;
 void readFromFile(int cellArray, int xSize, int ySize);
 double randomDouble();
 void fillArray(int array[SIZE][SIZE], double odds);
-int countSurroundingOnes(int arr[SIZE][SIZE], int row, int col);
+int countSurroundingAlive(int arr[SIZE][SIZE], int row, int col);
 int getNumAfterYear(int count, int currentState);
 void simYear(int arr[SIZE][SIZE], int& year);
 void summerizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year);
 void simYearSetUp(int arr[SIZE][SIZE]);
-int* getGameBestData();
-int (*getBestData())[SIZE];
+int* getHighScoreData();
+int (*getHighScoreArr())[SIZE];
 int (*getRecordData())[3];
 int& getTotalGamesCompleted();//might not need this prototype
 void cleanupPointers();
+void randomizeMultipleGames(int times, double odds);
+void summaryReport();
 
 int main() {
 
 	const int X_SIZE = 30;
 	const int Y_SIZE = 30;
 
-    int (*arrBest)[SIZE] = getBestData();//intialize pointers for the array that results with the most alive (best array)
+    int (*arrHighScore)[SIZE] = getHighScoreArr();//intialize pointers for the array that results with the most alive (best array)
     int (*arrRecord)[3] = getRecordData();//record of all games data
-    int* bestGameData = getGameBestData();//data of the best array
+    int* highScoreData = getHighScoreData();//data of the best array
     
     //By using these lines, you can access the data from these arrays. Either pass this into ur function or paste this into the 
     //function itself
@@ -44,6 +46,7 @@ int main() {
     //Useful functions: simYearSetUp(arr) will run one instance of the game of life and returns void
     //getTotalGamesCompleted will give the totalgames done, starting from 1. You can use this to know how may
     //rows to use from the array, but be aware to substract 1 as indexing starts at 0
+    //play random games with randomizeMultipleGames
 
 	std::cout << "Hello!";
 
@@ -101,14 +104,14 @@ void simYearSetUp(int arr[SIZE][SIZE]) {
 }
 
 //pointers for useful arrays - Raine
-int* getGameBestData() {
-    static int* bestGameData = new int[TOTAL_VARIABLES] {};
-    return bestGameData;
+int* getHighScoreData() {
+    static int* highScoreData = new int[TOTAL_VARIABLES] {};
+    return highScoreData;
 }
 
-int (*getBestData())[SIZE] {
-    static int (*arrBest)[SIZE] = new int[SIZE][SIZE]{};
-    return arrBest;
+int (*getHighScoreArr())[SIZE] {
+    static int (*arrHighScore)[SIZE] = new int[SIZE][SIZE]{};
+    return arrHighScore;
 }
 
 int (*getRecordData())[TOTAL_VARIABLES] {
@@ -129,8 +132,8 @@ void simYear(int arr[SIZE][SIZE], int& year) {
     //sim one year
     for (int i = 0; i < SIZE; i++) {
         for (int j = 0; j < SIZE; j++) {
-            int onesCount = countSurroundingOnes(arr, i, j);
-            tempArr[i][j] = getNumAfterYear(onesCount, arr[i][j]);
+            int aliveCount = countSurroundingAlive(arr, i, j);
+            tempArr[i][j] = getNumAfterYear(aliveCount, arr[i][j]);
 
             if (arr[i][j] != tempArr[i][j]) {
                 noChange = false;
@@ -164,7 +167,7 @@ void simYear(int arr[SIZE][SIZE], int& year) {
 }
 
 //function to count the number of 1's in the surrounding cells - Raine
-int countSurroundingOnes(int arr[SIZE][SIZE], int row, int col) {
+int countSurroundingAlive(int arr[SIZE][SIZE], int row, int col) {
     int count = 0;
 
     //check all 8 surrounding positions
@@ -210,9 +213,9 @@ void summerizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year
     const int NUM_TOTAL = SIZE * SIZE;
     int numAlive = 0;
 
-    int (*arrBest)[SIZE] = getBestData();
+    int (*arrHighScore)[SIZE] = getHighScoreArr();
     int (*arrRecord)[TOTAL_VARIABLES] = getRecordData();
-    int *bestGameData = getGameBestData();
+    int *highScoreData = getHighScoreData();
 
     //count alive
     for (int i = 0; i < SIZE; i++) {
@@ -229,17 +232,17 @@ void summerizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year
     //save if there is more alive
     if (numAlive > numAliveRecord) {
         numAliveRecord = numAlive;
-        bestGameData[0] = year;
-        bestGameData[1] = numAlive;
-        bestGameData[2] = numDead;
+        highScoreData[0] = year;
+        highScoreData[1] = numAlive;
+        highScoreData[2] = numDead;
 
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
-                arrBest[i][j] = arrOriginal[i][j];
+                arrHighScore[i][j] = arrOriginal[i][j];
             }
         }
     }
-
+   
     //failsafe if data overflows
     if (gamesPlayed < GAMES_MAX) {
         //insert into array
@@ -254,6 +257,32 @@ void summerizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year
     else {
         cout << "Error! No more space!" << endl;
         return;
+    }
+}
+
+//display all games' data - Raine
+void summaryReport() {
+    int (*arrRecord)[3] = getRecordData();
+    int rows = getTotalGamesCompleted();
+
+    string text[3] = { "Years elapsed", "Alive cells", "Dead cells" };
+
+    for (int i = 0; i < rows; i++) {
+        cout << "Game " << (i + 1) << ": " << endl;
+        for (int j = 0; j < TOTAL_VARIABLES; j++) {
+            cout << text[j] << ": " << arrRecord[i][j] << endl;
+        }
+        cout << endl;
+    }
+}
+
+//play multiple random games - Raine
+void randomizeMultipleGames(int times, double odds) {
+    static int ranArr[SIZE][SIZE] = { 0 };
+    
+    for (int i = 0; i < times; i++) {
+        fillArray(ranArr, odds);
+        simYearSetUp(ranArr);
     }
 }
 
@@ -283,11 +312,11 @@ double randomDouble() {
 //free memory - Raine
 void cleanupPointers() {
     
-    int* newArr = getGameBestData();
+    int* newArr = getHighScoreData();
     delete[] newArr;
     newArr = nullptr;//techinically this does nothing
     
-    int (*newArr2)[SIZE] = getBestData();
+    int (*newArr2)[SIZE] = getHighScoreArr();
     delete[] newArr2;
     newArr2 = nullptr;
     
