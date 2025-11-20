@@ -42,7 +42,7 @@ int main() {
     int* highScoreData = getHighScoreData();//data of the best array
     
     //By using these lines, you can access the data from these arrays. Either pass this into ur function or paste this into the 
-    //function itself
+    //function itself-test 1
 
     //Useful functions: simYearSetUp(arr) will run one instance of the game of life and returns void
     //getTotalGamesCompleted will give the totalgames done, starting from 1. You can use this to know how may
