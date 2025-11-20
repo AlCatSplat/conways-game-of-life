@@ -333,5 +333,20 @@ void cleanupPointers() {
 }
 
 void gameUI() {
-	// Will work on later
+	int userSelection = 0;
+
+std::cout << "Hello! Welcome to the game of life in CMPT 1109. What would you like to do?" << std::endl
+	<< "To display the initial state for the game of life press 1" << std::endl
+	<< "To load a new initial state from a CSV file into memory press 2" << std::endl
+	<< "To play the game of life with the current initial state press 3" << std::endl
+	<< "To report summary statistics on all games played press 4" << std::endl
+	<< "To randomly play the game multiple times press 5" << std::endl
+	<< "To output the best initial board press 6" << std::endl
+	<< "To quit the program press 7" << std::endl;
+
+while (!(std::cin >> userSelection) || userSelection > 8 || userSelection < 1) {
+	std::cout << "Invalid input. Please enter an integer from 1-7." << std::endl;
+	std::cin.clear();
+	std::cin.ignore(1000, '\n');
+}
 }
