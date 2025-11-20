@@ -59,12 +59,16 @@ int main() {
 // TODO: Implement ability to read game state from CSV file
 void readFromFile(int cellArray, int xSize, int ySize) {
 
-	std::ifstream CellDataFile("cells.csv");
+	std::ifstream cellDataFile;
 	std::string line;
 	bool firstRow = true;
 
-	for (int i = 0; i < xSize; i++) {
-		//Work in progress
+	cellDataFile.open("cells.csv");
+
+	for (int i = 0; i < SIZE; i++) {
+    	for (int j = 0; j < SIZE; j++) {
+        	cellDataFile >> cellArray[i][j];
+    	}
 	}
 
 	while (std::getline(CellDataFile, line)) {
@@ -73,7 +77,7 @@ void readFromFile(int cellArray, int xSize, int ySize) {
 			continue;
 		}
 	}
-
+	cellDataFile.close();
 }
 
 //saves total games - Raine
