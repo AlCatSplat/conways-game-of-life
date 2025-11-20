@@ -15,6 +15,7 @@ const int TOTAL_VARIABLES = 3;
 const int GAMES_MAX = 200;
 const int YEARS_MAX = 30;
 
+void gameUI();
 void readFromFile(int cellArray, int xSize, int ySize);
 double randomDouble();
 void fillArray(int array[SIZE][SIZE], double odds);
@@ -54,53 +55,57 @@ int main() {
 
 	readFromFile(cells[X_SIZE][Y_SIZE], X_SIZE, Y_SIZE);
 
-    //free memory
-    void cleanupGameData();
+	//free memory
+	void cleanupGameData();
 	return 0;
 }
 
 // TODO: Implement ability to read game state from CSV file
 void readFromFile(int cellArray, int xSize, int ySize) {
 
-	std::ifstream CellDataFile("cells.csv");
+	std::ifstream cellDataFile;
 	std::string line;
 	bool firstRow = true;
 
-	for (int i = 0; i < xSize; i++) {
-		//Work in progress
+	cellDataFile.open("cells.csv");
+
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			cellDataFile >> cellArray[i][j];
+		}
 	}
 
-	while (std::getline(CellDataFile, line)) {
+	while (std::getline(cellDataFile, line)) {
 		if (firstRow) {
 			firstRow = false;
 			continue;
 		}
 	}
-
+	cellDataFile.close();
 }
 
 //saves total games - Raine
 int& getTotalGamesCompleted() {
-    static int totalGames = 0;
-    return totalGames;
+	static int totalGames = 0;
+	return totalGames;
 }
 
 void simYearSetUp(int arr[SIZE][SIZE]) {
-    int year = 0;
-    static int changingArr[SIZE][SIZE];
+	int year = 0;
+	static int changingArr[SIZE][SIZE];
 
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            changingArr[i][j] = arr[i][j];
-        }
-    }
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			changingArr[i][j] = arr[i][j];
+		}
+	}
 
-    simYear(changingArr, year);
-    summerizeResults(changingArr, arr, year);
+	simYear(changingArr, year);
+	summerizeResults(changingArr, arr, year);
 
-    //increment games
-    getTotalGamesCompleted()++;
-    return;
+	//increment games
+	getTotalGamesCompleted()++;
+	return;
 }
 
 //pointers for useful arrays - Raine
@@ -115,19 +120,19 @@ int (*getHighScoreArr())[SIZE] {
 }
 
 int (*getRecordData())[TOTAL_VARIABLES] {
-    static int (*arrRecord)[TOTAL_VARIABLES] = new int[GAMES_MAX][TOTAL_VARIABLES]{};
-    return arrRecord;
+	static int (*arrRecord)[TOTAL_VARIABLES] = new int[GAMES_MAX][TOTAL_VARIABLES]{};
+	return arrRecord;
 }
 
 //simulate the game - Raine
 void simYear(int arr[SIZE][SIZE], int& year) {
-    bool noChange = true;
-    bool allDead = true;
-    
-    int tempArr[SIZE][SIZE] = { 0 };
+	bool noChange = true;
+	bool allDead = true;
 
-    //instructions say to start at year 0
-    cout << "Current year: " << year << endl;
+	int tempArr[SIZE][SIZE] = { 0 };
+
+	//instructions say to start at year 0
+	cout << "Current year: " << year << endl;
 
     //sim one year
     for (int i = 0; i < SIZE; i++) {
@@ -135,99 +140,99 @@ void simYear(int arr[SIZE][SIZE], int& year) {
             int aliveCount = countSurroundingAlive(arr, i, j);
             tempArr[i][j] = getNumAfterYear(aliveCount, arr[i][j]);
 
-            if (arr[i][j] != tempArr[i][j]) {
-                noChange = false;
-            }
+			if (arr[i][j] != tempArr[i][j]) {
+				noChange = false;
+			}
 
-            if (tempArr[i][j] == ALIVE) {
-                allDead = false;
-            }
-        }
-    }
+			if (tempArr[i][j] == ALIVE) {
+				allDead = false;
+			}
+		}
+	}
 
-    //copy temp arr and cout
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            arr[i][j] = tempArr[i][j];
-            cout << arr[i][j];
-        }
-        cout << endl;
-    }
+	//copy temp arr and cout
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			arr[i][j] = tempArr[i][j];
+			cout << arr[i][j];
+		}
+		cout << endl;
+	}
 
-    //one year has passed
-    year++;
+	//one year has passed
+	year++;
 
-    //check if game has ended
-    if (noChange || allDead || year >= YEARS_MAX) {
-        return; 
-    }
+	//check if game has ended
+	if (noChange || allDead || year >= YEARS_MAX) {
+		return;
+	}
 
-    //loop
-    simYear(arr, year);
+	//loop
+	simYear(arr, year);
 }
 
 //function to count the number of 1's in the surrounding cells - Raine
 int countSurroundingAlive(int arr[SIZE][SIZE], int row, int col) {
     int count = 0;
 
-    //check all 8 surrounding positions
-    for (int i = -1; i <= 1; i++) {
-        for (int j = -1; j <= 1; j++) {
-            
-            //skip the center cell itself
-            if (i == 0 && j == 0) {
-                continue;
-            }
+	//check all 8 surrounding positions
+	for (int i = -1; i <= 1; i++) {
+		for (int j = -1; j <= 1; j++) {
 
-            int newRow = row + i;
-            int newCol = col + j;
+			//skip the center cell itself
+			if (i == 0 && j == 0) {
+				continue;
+			}
 
-            //check if the index is within bounds, if it is, check for '1'
-            if (newRow >= 0 && newRow < SIZE && newCol >= 0 && newCol < SIZE) {
-                if (arr[newRow][newCol] == ALIVE) {
-                    count++;
-                }
-            }
-        }
-    }
-    return count;
+			int newRow = row + i;
+			int newCol = col + j;
+
+			//check if the index is within bounds, if it is, check for '1'
+			if (newRow >= 0 && newRow < SIZE && newCol >= 0 && newCol < SIZE) {
+				if (arr[newRow][newCol] == ALIVE) {
+					count++;
+				}
+			}
+		}
+	}
+	return count;
 }
 
 //determine dead/alive - Raine
 int getNumAfterYear(int count, int currentState) {
-    if (count == 3) {
-        return ALIVE;
-    }
-    else if (count == 2 && currentState == ALIVE) {
-        return ALIVE;
-    }
-    else {
-        return DEAD;
-    }
+	if (count == 3) {
+		return ALIVE;
+	}
+	else if (count == 2 && currentState == ALIVE) {
+		return ALIVE;
+	}
+	else {
+		return DEAD;
+	}
 }
 
 //saves data to arrays and determines best array - Raine
 void summerizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year) {
-    static int numAliveRecord = -1;
-    static int gamesPlayed = 0;
-    const int NUM_TOTAL = SIZE * SIZE;
-    int numAlive = 0;
+	static int numAliveRecord = -1;
+	static int gamesPlayed = 0;
+	const int NUM_TOTAL = SIZE * SIZE;
+	int numAlive = 0;
 
     int (*arrHighScore)[SIZE] = getHighScoreArr();
     int (*arrRecord)[TOTAL_VARIABLES] = getRecordData();
     int *highScoreData = getHighScoreData();
 
-    //count alive
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            if (arr[i][j] == ALIVE) {
-                numAlive++;
-            }
-        }
-    }
+	//count alive
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			if (arr[i][j] == ALIVE) {
+				numAlive++;
+			}
+		}
+	}
 
-    //count dead
-    int numDead = NUM_TOTAL - numAlive;
+	//count dead
+	int numDead = NUM_TOTAL - numAlive;
 
     //save if there is more alive
     if (numAlive > numAliveRecord) {
@@ -288,25 +293,25 @@ void randomizeMultipleGames(int times, double odds) {
 
 //fill the array with random values based on inputted odds - Raine
 void fillArray(int array[SIZE][SIZE], double odds) {
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
 
-            if (randomDouble() < odds) {
-                array[i][j] = ALIVE;
-            }
-            else {
-                array[i][j] = DEAD;
-            }
-        }
-    }
+			if (randomDouble() < odds) {
+				array[i][j] = ALIVE;
+			}
+			else {
+				array[i][j] = DEAD;
+			}
+		}
+	}
 }
 
 //random num gen - Raine
 double randomDouble() {
-    static random_device rd;
-    static default_random_engine gen(rd());
-    static uniform_real_distribution<double> dis(0.0, 1.0);
-    return dis(gen);
+	static random_device rd;
+	static default_random_engine gen(rd());
+	static uniform_real_distribution<double> dis(0.0, 1.0);
+	return dis(gen);
 }
 
 //free memory - Raine
@@ -324,5 +329,9 @@ void cleanupPointers() {
     delete[] newArr3;
     newArr3 = nullptr;
 
-    return;
+	return;
+}
+
+void gameUI() {
+	// Will work on later
 }
