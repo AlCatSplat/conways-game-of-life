@@ -26,7 +26,7 @@ void summerizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year
 void simYearSetUp(int arr[SIZE][SIZE]);
 int* getHighScoreData();
 int (*getHighScoreArr())[SIZE];
-int (*getRecordData())[3];
+int (*getRecordData())[TOTAL_VARIABLES];
 int& getTotalGamesCompleted();//might not need this prototype
 void cleanupPointers();
 void randomizeMultipleGames(int times, double odds);
@@ -270,7 +270,7 @@ void summaryReport() {
     int (*arrRecord)[3] = getRecordData();
     int rows = getTotalGamesCompleted();
 
-    string text[3] = { "Years elapsed", "Alive cells", "Dead cells" };
+    string text[TOTAL_VARIABLES] = { "Years elapsed", "Alive cells", "Dead cells" };
 
     for (int i = 0; i < rows; i++) {
         cout << "Game " << (i + 1) << ": " << endl;
