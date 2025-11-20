@@ -73,7 +73,7 @@ void readFromFile(int cellArray, int xSize, int ySize) {
 
 }
 
-//saves total games
+//saves total games - Raine
 int& getTotalGamesCompleted() {
     static int totalGames = 0;
     return totalGames;
@@ -97,7 +97,7 @@ void simYearSetUp(int arr[SIZE][SIZE]) {
     return;
 }
 
-//pointers for useful arrays
+//pointers for useful arrays - Raine
 int* getGameBestData() {
     static int* bestGameData = new int[TOTAL_VARIABLES] {};
     return bestGameData;
@@ -113,7 +113,7 @@ int (*getRecordData())[TOTAL_VARIABLES] {
     return arrRecord;
 }
 
-//simulate the game
+//simulate the game - Raine
 void simYear(int arr[SIZE][SIZE], int& year) {
     bool noChange = true;
     bool allDead = true;
@@ -200,7 +200,7 @@ int getNumAfterYear(int count, int currentState) {
     }
 }
 
-//saves data to arrays and determines best array
+//saves data to arrays and determines best array - Raine
 void summerizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year) {
     static int numAliveRecord = -1;
     static int gamesPlayed = 0;
