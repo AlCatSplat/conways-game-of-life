@@ -27,6 +27,7 @@ int* getGameBestData();
 int (*getBestData())[SIZE];
 int (*getRecordData())[3];
 int& getTotalGamesCompleted();//might not need this prototype
+void cleanupPointers();
 
 int main() {
 
@@ -50,6 +51,8 @@ int main() {
 
 	readFromFile(cells[X_SIZE][Y_SIZE], X_SIZE, Y_SIZE);
 
+    //free memory
+    void cleanupGameData();
 	return 0;
 }
 
@@ -275,4 +278,22 @@ double randomDouble() {
     static default_random_engine gen(rd());
     static uniform_real_distribution<double> dis(0.0, 1.0);
     return dis(gen);
+}
+
+//free memory - Raine
+void cleanupPointers() {
+    
+    int* newArr = getGameBestData();
+    delete[] newArr;
+    newArr = nullptr;//techinically this does nothing
+    
+    int (*newArr2)[SIZE] = getBestData();
+    delete[] newArr2;
+    newArr2 = nullptr;
+    
+    int (*newArr3)[TOTAL_VARIABLES] = getRecordData();
+    delete[] newArr3;
+    newArr3 = nullptr;
+
+    return;
 }
