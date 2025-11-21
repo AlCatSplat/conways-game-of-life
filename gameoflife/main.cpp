@@ -6,6 +6,7 @@
 #include <string>
 #include <random>
 #include <ctime>
+#include <sstream>
 using namespace std;
 
 const int SIZE = 30;
@@ -15,9 +16,8 @@ const int TOTAL_VARIABLES = 3;
 const int GAMES_MAX = 200;
 const int YEARS_MAX = 30;
 
-const int X_SIZE = 30;
-const int Y_SIZE = 30;
-int cells[X_SIZE][Y_SIZE];
+const int GRID_SIZE = 30;
+int cells[GRID_SIZE][GRID_SIZE];
 
 void gameUI();
 void readFromFile(int cellArray[SIZE][SIZE]);
@@ -53,8 +53,6 @@ int main() {
 	//rows to use from the array, but be aware to substract 1 as indexing starts at 0
 	//play random games with randomizeMultipleGames	
 
-	readFromFile(cells);
-
 	//free memory
 	cleanupGameData();
 	return 0;
@@ -67,21 +65,30 @@ void readFromFile(int cellArray[SIZE][SIZE]) {
 
 	if (!cellDataFile.is_open()) {
 		std::cout << "Error: Cannot open file." << std::endl;
+		return;
 	}
 
 	std::string line;
-	bool firstRow = true;
+	int row = 0;
 
-	for (int i = 0; i < SIZE; i++) {
-		for (int j = 0; j < SIZE; j++) {
-			cellDataFile >> cellArray[i][j];
-		}
-	}
+	std::getline(cellDataFile, line);
 
 	while (std::getline(cellDataFile, line)) {
-		if (firstRow) {
-			firstRow = false;
-			continue;
+		std::stringstream ss(line);
+		std::string cell;
+		int column = 0;
+
+		std::getline(ss, cell, ',');
+
+		while (std::getline(ss, cell, ',')) {
+			if (column < SIZE) {
+				cellArray[row][column] = std::stoi(cell);
+				column++;
+			}
+		}
+		row++;
+		if (row >= SIZE) {
+			break;
 		}
 	}
 	cellDataFile.close();
@@ -369,7 +376,14 @@ void gameUI() {
 
 	switch (userSelection) {
 	case 1:
-
+		// Temporary testing solution
+		readFromFile(cells);
+		for (int i = 0; i < GRID_SIZE; i++) {
+			for (int j = 0; j < GRID_SIZE; j++) {
+				std::cout << cells[i][j] << " ";
+			}
+			std::cout << std::endl;
+		}
 		break;
 	case 2:
 		break;
