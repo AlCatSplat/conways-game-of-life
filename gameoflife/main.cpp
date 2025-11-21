@@ -37,6 +37,7 @@ void cleanupGameData();
 std::string askForFileName();
 void displayGameState(int cellArray[SIZE][SIZE], std::string cellFile);
 double askForOdds();
+int askForTimes();
 void getBestBoardValue();
 
 int main() {
@@ -404,7 +405,7 @@ int gameUI(int cellArray[SIZE][SIZE]) {
 		summaryReport();
 		break;
 	case 5:
-		fillArray(cellArray, askForOdds());
+		randomizeMultipleGames(askForTimes(), askForOdds());
 		break;
 	case 6:
 		getBestBoardValue();
@@ -428,11 +429,21 @@ std::string askForFileName() {
 	return userInput;
 }
 
-// Asks user for the odds they want - Alex
+// Asks user for the odds they want for the randomized game - Alex
 double askForOdds() {
 	double userInput;
 	std::cout << "Please input preferred odds: ";
 	std::cin >> userInput;
+	std::cout << std::endl;
+	return userInput;
+}
+
+// Ask user for how many times they want to run the randomized game - Alex
+int askForTimes() {
+	int userInput;
+	std::cout << "How many times would you like to run the game? ";
+	std::cin >> userInput;
+	std::cout << std::endl;
 	return userInput;
 }
 
@@ -448,6 +459,6 @@ void displayGameState(int cellArray[SIZE][SIZE], std::string cellFile) {
 }
 
 void getBestBoardValue() {
-	getHighScoreArr();
-	getHighScoreData();
+	int (*arrHighScore)[SIZE] = getHighScoreArr();
+	int* highScoreData = getHighScoreData();
 }
