@@ -15,6 +15,10 @@ const int TOTAL_VARIABLES = 3;
 const int GAMES_MAX = 200;
 const int YEARS_MAX = 30;
 
+const int X_SIZE = 30;
+const int Y_SIZE = 30;
+int cells[X_SIZE][Y_SIZE];
+
 void gameUI();
 void readFromFile(int cellArray[SIZE][SIZE]);
 double randomDouble();
@@ -33,10 +37,7 @@ void randomizeMultipleGames(int times, double odds);
 void summaryReport();
 void cleanupGameData();
 
-int main() {
-
-	const int X_SIZE = 30;
-	const int Y_SIZE = 30;
+int main() {	
 
 	gameUI();
 
@@ -50,9 +51,7 @@ int main() {
 	//Useful functions: simYearSetUp(arr) will run one instance of the game of life and returns void
 	//getTotalGamesCompleted will give the totalgames done, starting from 1. You can use this to know how may
 	//rows to use from the array, but be aware to substract 1 as indexing starts at 0
-	//play random games with randomizeMultipleGames
-
-	int cells[X_SIZE][Y_SIZE];
+	//play random games with randomizeMultipleGames	
 
 	readFromFile(cells);
 
@@ -64,11 +63,14 @@ int main() {
 // TODO: Implement ability to read game state from CSV file
 void readFromFile(int cellArray[SIZE][SIZE]) {
 
-	std::ifstream cellDataFile;
+	std::ifstream cellDataFile("cells.csv");
+
+	if (!cellDataFile.is_open()) {
+		std::cout << "Error: Cannot open file." << std::endl;
+	}
+
 	std::string line;
 	bool firstRow = true;
-
-	cellDataFile.open("cells.csv");
 
 	for (int i = 0; i < SIZE; i++) {
 		for (int j = 0; j < SIZE; j++) {
@@ -372,6 +374,7 @@ void gameUI() {
 	case 2:
 		break;
 	case 3:
+		simYearSetUp(cells);
 		break;
 	case 4:
 		summaryReport();
