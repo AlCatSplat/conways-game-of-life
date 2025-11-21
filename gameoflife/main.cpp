@@ -22,7 +22,7 @@ void fillArray(int array[SIZE][SIZE], double odds);
 int countSurroundingAlive(int arr[SIZE][SIZE], int row, int col);
 int getNumAfterYear(int count, int currentState);
 void simYear(int arr[SIZE][SIZE], int& year);
-void summerizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year);
+void summarizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year);
 void simYearSetUp(int arr[SIZE][SIZE]);
 int* getHighScoreData();
 int (*getHighScoreArr())[SIZE];
@@ -102,7 +102,7 @@ void simYearSetUp(int arr[SIZE][SIZE]) {
 	}
 
 	simYear(changingArr, year);
-	summerizeResults(changingArr, arr, year);
+	summarizeResults(changingArr, arr, year);
 
 	//increment games
 	getTotalGamesCompleted()++;
@@ -213,7 +213,7 @@ int getNumAfterYear(int count, int currentState) {
 }
 
 //saves data to arrays and determines best array - Raine
-void summerizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year) {
+void summarizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year) {
 	static int numAliveRecord = -1;
 	static int gamesPlayed = 0;
 	const int NUM_TOTAL = SIZE * SIZE;
@@ -272,6 +272,11 @@ void summaryReport() {
 	int rows = getTotalGamesCompleted();
 
 	string text[TOTAL_VARIABLES] = { "Years elapsed", "Alive cells", "Dead cells" };
+
+	// Throws error if there is no record of games played - Alex
+	if (rows == 0) {
+		std::cout << "Error: No games played." << std::endl;
+	}
 
 	for (int i = 0; i < rows; i++) {
 		cout << "Game " << (i + 1) << ": " << endl;
@@ -337,27 +342,46 @@ void gameUI() {
 	int userSelection = 0;
 
 	const char* menuOptions = R"(
--------------------------------------------------------------------------------
-Conway's Game of Life				by Raine, Alex, and Andy
--------------------------------------------------------------------------------
-
-Welcome! What would you like to do?
-
-(1) Display the initial game state
-(2) Load a new initial state from a CSV file
-(3) Run the game with the current initial state
-(4) Give a summary of all games previously played
-(5) Run the game with a random state
-(6) Display the best initial board values
-(7) Exit the program
-)";
+ -------------------------------------------------------------------------------
+ Conway's Game of Life				by Raine, Alex, and Andy
+ -------------------------------------------------------------------------------
+ 
+ Welcome! What would you like to do?
+ 
+ (1) Display the initial game state
+ (2) Load a new initial state from a CSV file
+ (3) Run the game with the current initial state
+ (4) Give a summary of all games previously played
+ (5) Run the game with a random state
+ (6) Display the best initial board values
+ (7) Exit the program
+ )";
 
 	std::cout << menuOptions << std::endl << "> ";
 
 	while (!(std::cin >> userSelection) || userSelection > 8 || userSelection < 1) {
-		std::cout << "Invalid input. Please enter an integer from 1-7." << std::endl;
+		std::cout << "Invalid input. Please enter an integer from 1-7." << std::endl << "> ";
 		std::cin.clear();
 		std::cin.ignore(1000, '\n');
+	}
+
+	switch (userSelection) {
+	case 1:
+
+		break;
+	case 2:
+		break;
+	case 3:
+		break;
+	case 4:
+		summaryReport();
+		break;
+	case 5:
+		break;
+	case 6:
+		break;
+	case 7:
+		break;
 	}
 }
 
