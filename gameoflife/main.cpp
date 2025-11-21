@@ -17,7 +17,7 @@ const int TOTAL_VARIABLES = 3;
 const int GAMES_MAX = 200;
 const int YEARS_MAX = 30;
 
-void gameUI(int cellArray[SIZE][SIZE]);
+int gameUI(int cellArray[SIZE][SIZE]);
 void readFromFile(int cellArray[SIZE][SIZE], std::string cellFile);
 double randomDouble();
 void fillArray(int array[SIZE][SIZE], double odds);
@@ -43,7 +43,11 @@ int main() {
 
 	int cells[SIZE][SIZE];
 
-	gameUI(cells);
+	int userSelection = gameUI(cells);
+
+	while (userSelection != 7) {
+		gameUI(cells);
+	}
 
 	int (*arrHighScore)[SIZE] = getHighScoreArr();//intialize pointers for the array that results with the most alive (best array)
 	int (*arrRecord)[3] = getRecordData();//record of all games data
@@ -303,33 +307,8 @@ void summaryReport() {
 }
 
 //play multiple random games - Raine
-void randomizeMultipleGames() {
-
+void randomizeMultipleGames(int times, double odds) {
 	static int ranArr[SIZE][SIZE] = { 0 };
-	int times = 0;
-	double odds = 0.0;
-
-	cout << "How many games do you want to play? (1 - 50)" << endl;
-	cin >> times;
-
-	while (!cin || times > 50 || times < 1 || cin.peek() != '\n') {
-		cout << "Invalid input. Please enter an integer from 1-50." << endl;
-		cout << "How many games do you want to play? (1 - 50)" << endl;
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cin >> times;
-	}
-
-	cout << "What are the odds that a cell starts alive? (0.0 - 1.0)" << endl;
-	cin >> odds;
-
-	while (!cin || odds > 1.0 || odds < 0.0) {
-		cout << "Invalid input. Please enter an decimal from 0.0-1.0." << endl;
-		cout << "What are the odds that a cell starts alive? (0.0 - 1.0)" << endl;
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cin >> odds;
-	}
 
 	for (int i = 0; i < times; i++) {
 		fillArray(ranArr, odds);
@@ -378,7 +357,7 @@ void cleanupPointers() {
 	return;
 }
 
-void gameUI(int cellArray[SIZE][SIZE]) {
+int gameUI(int cellArray[SIZE][SIZE]) {
 
 	std::string cellFile = "cells.csv";
 	bool isRunning = true;
@@ -415,44 +394,33 @@ void gameUI(int cellArray[SIZE][SIZE]) {
 			cin >> userSelection;
 		}
 
-
-		switch (userSelection) {
-		case 1:
-			displayGameState(cellArray, cellFile);
-			break;
-		case 2:
-			readFromFile(cellArray, askForFileName());
-			break;
-		case 3:
-			simYearSetUp(cellArray);
-			haveData = true;
-			break;
-		case 4:
-			if (!haveData) {
-				cout << "Error! No games recorded yet! Run a game first!" << endl;
-			}
-			else {
-				summaryReport();
-			}
-			break;
-		case 5:
-			randomizeMultipleGames();
-			haveData = true;
-			break;
-		case 6:
-			if (!haveData) {
-				cout << "Error! No games recorded yet! Run a game first!" << endl;
-			}
-			else {
-				getBestBoardValue();
-			}
-			break;
-		case 7:
-			std::cout << "Farewell!";
-			isRunning = false;
-			break;
-		}
+	switch (userSelection) {
+	case 1:
+		displayGameState(cellArray, cellFile);
+		break;
+	case 2:
+		readFromFile(cellArray, askForFileName());
+		break;
+	case 3:
+		simYearSetUp(cellArray);
+		break;
+	case 4:
+		summaryReport();
+		break;
+	case 5:
+		randomizeMultipleGames(askForTimes(), askForOdds());
+		break;
+	case 6:
+		getBestBoardValue();
+		break;
+	case 7:
+		std::cout << "Farewell!";
+		break;
 	}
+}
+
+void cleanupGameData() {
+
 }
 
 // Asks user for the cell file - Alex
