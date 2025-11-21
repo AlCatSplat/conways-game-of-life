@@ -367,8 +367,8 @@ void gameUI() {
  )";
 
 	std::cout << menuOptions << std::endl << "> ";
-
-	while (!(std::cin >> userSelection) || userSelection > 8 || userSelection < 1) {
+	//Input validation
+	while (!(std::cin >> userSelection) || userSelection > 7 || userSelection < 1) {
 		std::cout << "Invalid input. Please enter an integer from 1-7." << std::endl << "> ";
 		std::cin.clear();
 		std::cin.ignore(1000, '\n');
