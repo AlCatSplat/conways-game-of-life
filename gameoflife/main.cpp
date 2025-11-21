@@ -17,7 +17,7 @@ const int TOTAL_VARIABLES = 3;
 const int GAMES_MAX = 200;
 const int YEARS_MAX = 30;
 
-void gameUI(int cellArray[SIZE][SIZE]);
+int gameUI(int cellArray[SIZE][SIZE]);
 void readFromFile(int cellArray[SIZE][SIZE], std::string cellFile);
 double randomDouble();
 void fillArray(int array[SIZE][SIZE], double odds);
@@ -43,7 +43,11 @@ int main() {
 
 	int cells[SIZE][SIZE];
 
-	gameUI(cells);
+	int userSelection = gameUI(cells);
+
+	while (userSelection != 7) {
+		gameUI(cells);
+	}
 
 	int (*arrHighScore)[SIZE] = getHighScoreArr();//intialize pointers for the array that results with the most alive (best array)
 	int (*arrRecord)[3] = getRecordData();//record of all games data
@@ -354,7 +358,7 @@ void cleanupPointers() {
 	return;
 }
 
-void gameUI(int cellArray[SIZE][SIZE]) {
+int gameUI(int cellArray[SIZE][SIZE]) {
 
 	std::string cellFile = "cells.csv";
 
@@ -409,6 +413,7 @@ void gameUI(int cellArray[SIZE][SIZE]) {
 		std::cout << "Farewell!";
 		break;
 	}
+	return userSelection;
 }
 
 void cleanupGameData() {
