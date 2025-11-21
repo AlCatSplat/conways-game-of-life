@@ -16,7 +16,7 @@ const int GAMES_MAX = 200;
 const int YEARS_MAX = 30;
 
 void gameUI();
-void readFromFile(int cellArray, int xSize, int ySize);
+void readFromFile(int cellArray[SIZE][SIZE]);
 double randomDouble();
 void fillArray(int array[SIZE][SIZE], double odds);
 int countSurroundingAlive(int arr[SIZE][SIZE], int row, int col);
@@ -37,23 +37,23 @@ int main() {
 	const int X_SIZE = 30;
 	const int Y_SIZE = 30;
 
-    int (*arrHighScore)[SIZE] = getHighScoreArr();//intialize pointers for the array that results with the most alive (best array)
-    int (*arrRecord)[3] = getRecordData();//record of all games data
-    int* highScoreData = getHighScoreData();//data of the best array
-    
-    //By using these lines, you can access the data from these arrays. Either pass this into ur function or paste this into the 
-    //function itself-test 2
+	gameUI();
 
-    //Useful functions: simYearSetUp(arr) will run one instance of the game of life and returns void
-    //getTotalGamesCompleted will give the totalgames done, starting from 1. You can use this to know how may
-    //rows to use from the array, but be aware to substract 1 as indexing starts at 0
-    //play random games with randomizeMultipleGames
+	int (*arrHighScore)[SIZE] = getHighScoreArr();//intialize pointers for the array that results with the most alive (best array)
+	int (*arrRecord)[3] = getRecordData();//record of all games data
+	int* highScoreData = getHighScoreData();//data of the best array
 
-	std::cout << "Hello!";
+	//By using these lines, you can access the data from these arrays. Either pass this into ur function or paste this into the 
+	//function itself-test 2
+
+	//Useful functions: simYearSetUp(arr) will run one instance of the game of life and returns void
+	//getTotalGamesCompleted will give the totalgames done, starting from 1. You can use this to know how may
+	//rows to use from the array, but be aware to substract 1 as indexing starts at 0
+	//play random games with randomizeMultipleGames
 
 	int cells[X_SIZE][Y_SIZE];
 
-	readFromFile(cells[X_SIZE][Y_SIZE], X_SIZE, Y_SIZE);
+	readFromFile(cells);
 
 	//free memory
 	void cleanupGameData();
@@ -61,7 +61,7 @@ int main() {
 }
 
 // TODO: Implement ability to read game state from CSV file
-void readFromFile(int cellArray, int xSize, int ySize) {
+void readFromFile(int cellArray[SIZE][SIZE]) {
 
 	std::ifstream cellDataFile;
 	std::string line;
@@ -110,13 +110,13 @@ void simYearSetUp(int arr[SIZE][SIZE]) {
 
 //pointers for useful arrays - Raine
 int* getHighScoreData() {
-    static int* highScoreData = new int[TOTAL_VARIABLES] {};
-    return highScoreData;
+	static int* highScoreData = new int[TOTAL_VARIABLES] {};
+	return highScoreData;
 }
 
 int (*getHighScoreArr())[SIZE] {
-    static int (*arrHighScore)[SIZE] = new int[SIZE][SIZE]{};
-    return arrHighScore;
+	static int (*arrHighScore)[SIZE] = new int[SIZE][SIZE]{};
+	return arrHighScore;
 }
 
 int (*getRecordData())[TOTAL_VARIABLES] {
@@ -134,11 +134,11 @@ void simYear(int arr[SIZE][SIZE], int& year) {
 	//instructions say to start at year 0
 	cout << "Current year: " << year << endl;
 
-    //sim one year
-    for (int i = 0; i < SIZE; i++) {
-        for (int j = 0; j < SIZE; j++) {
-            int aliveCount = countSurroundingAlive(arr, i, j);
-            tempArr[i][j] = getNumAfterYear(aliveCount, arr[i][j]);
+	//sim one year
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			int aliveCount = countSurroundingAlive(arr, i, j);
+			tempArr[i][j] = getNumAfterYear(aliveCount, arr[i][j]);
 
 			if (arr[i][j] != tempArr[i][j]) {
 				noChange = false;
@@ -173,7 +173,7 @@ void simYear(int arr[SIZE][SIZE], int& year) {
 
 //function to count the number of 1's in the surrounding cells - Raine
 int countSurroundingAlive(int arr[SIZE][SIZE], int row, int col) {
-    int count = 0;
+	int count = 0;
 
 	//check all 8 surrounding positions
 	for (int i = -1; i <= 1; i++) {
@@ -218,9 +218,9 @@ void summerizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year
 	const int NUM_TOTAL = SIZE * SIZE;
 	int numAlive = 0;
 
-    int (*arrHighScore)[SIZE] = getHighScoreArr();
-    int (*arrRecord)[TOTAL_VARIABLES] = getRecordData();
-    int *highScoreData = getHighScoreData();
+	int (*arrHighScore)[SIZE] = getHighScoreArr();
+	int (*arrRecord)[TOTAL_VARIABLES] = getRecordData();
+	int* highScoreData = getHighScoreData();
 
 	//count alive
 	for (int i = 0; i < SIZE; i++) {
@@ -234,61 +234,61 @@ void summerizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year
 	//count dead
 	int numDead = NUM_TOTAL - numAlive;
 
-    //save if there is more alive
-    if (numAlive > numAliveRecord) {
-        numAliveRecord = numAlive;
-        highScoreData[0] = year;
-        highScoreData[1] = numAlive;
-        highScoreData[2] = numDead;
+	//save if there is more alive
+	if (numAlive > numAliveRecord) {
+		numAliveRecord = numAlive;
+		highScoreData[0] = year;
+		highScoreData[1] = numAlive;
+		highScoreData[2] = numDead;
 
-        for (int i = 0; i < SIZE; i++) {
-            for (int j = 0; j < SIZE; j++) {
-                arrHighScore[i][j] = arrOriginal[i][j];
-            }
-        }
-    }
-   
-    //failsafe if data overflows
-    if (gamesPlayed < GAMES_MAX) {
-        //insert into array
-        arrRecord[gamesPlayed][0] = year;
-        arrRecord[gamesPlayed][1] = numAlive;
-        arrRecord[gamesPlayed][2] = numDead;
-        gamesPlayed++;
-        cout << "Years elasped: " << year << " Alive cells: " << numAlive 
-             << " Dead cells: " << numDead;
-        return;
-    }
-    else {
-        cout << "Error! No more space!" << endl;
-        return;
-    }
+		for (int i = 0; i < SIZE; i++) {
+			for (int j = 0; j < SIZE; j++) {
+				arrHighScore[i][j] = arrOriginal[i][j];
+			}
+		}
+	}
+
+	//failsafe if data overflows
+	if (gamesPlayed < GAMES_MAX) {
+		//insert into array
+		arrRecord[gamesPlayed][0] = year;
+		arrRecord[gamesPlayed][1] = numAlive;
+		arrRecord[gamesPlayed][2] = numDead;
+		gamesPlayed++;
+		cout << "Years elasped: " << year << " Alive cells: " << numAlive
+			<< " Dead cells: " << numDead;
+		return;
+	}
+	else {
+		cout << "Error! No more space!" << endl;
+		return;
+	}
 }
 
 //display all games' data - Raine
 void summaryReport() {
-    int (*arrRecord)[3] = getRecordData();
-    int rows = getTotalGamesCompleted();
+	int (*arrRecord)[3] = getRecordData();
+	int rows = getTotalGamesCompleted();
 
-    string text[TOTAL_VARIABLES] = { "Years elapsed", "Alive cells", "Dead cells" };
+	string text[TOTAL_VARIABLES] = { "Years elapsed", "Alive cells", "Dead cells" };
 
-    for (int i = 0; i < rows; i++) {
-        cout << "Game " << (i + 1) << ": " << endl;
-        for (int j = 0; j < TOTAL_VARIABLES; j++) {
-            cout << text[j] << ": " << arrRecord[i][j] << endl;
-        }
-        cout << endl;
-    }
+	for (int i = 0; i < rows; i++) {
+		cout << "Game " << (i + 1) << ": " << endl;
+		for (int j = 0; j < TOTAL_VARIABLES; j++) {
+			cout << text[j] << ": " << arrRecord[i][j] << endl;
+		}
+		cout << endl;
+	}
 }
 
 //play multiple random games - Raine
 void randomizeMultipleGames(int times, double odds) {
-    static int ranArr[SIZE][SIZE] = { 0 };
-    
-    for (int i = 0; i < times; i++) {
-        fillArray(ranArr, odds);
-        simYearSetUp(ranArr);
-    }
+	static int ranArr[SIZE][SIZE] = { 0 };
+
+	for (int i = 0; i < times; i++) {
+		fillArray(ranArr, odds);
+		simYearSetUp(ranArr);
+	}
 }
 
 //fill the array with random values based on inputted odds - Raine
@@ -316,18 +316,18 @@ double randomDouble() {
 
 //free memory - Raine
 void cleanupPointers() {
-    
-    int* newArr = getHighScoreData();
-    delete[] newArr;
-    newArr = nullptr;//techinically this does nothing
-    
-    int (*newArr2)[SIZE] = getHighScoreArr();
-    delete[] newArr2;
-    newArr2 = nullptr;
-    
-    int (*newArr3)[TOTAL_VARIABLES] = getRecordData();
-    delete[] newArr3;
-    newArr3 = nullptr;
+
+	int* newArr = getHighScoreData();
+	delete[] newArr;
+	newArr = nullptr;//techinically this does nothing
+
+	int (*newArr2)[SIZE] = getHighScoreArr();
+	delete[] newArr2;
+	newArr2 = nullptr;
+
+	int (*newArr3)[TOTAL_VARIABLES] = getRecordData();
+	delete[] newArr3;
+	newArr3 = nullptr;
 
 	return;
 }
@@ -335,18 +335,18 @@ void cleanupPointers() {
 void gameUI() {
 	int userSelection = 0;
 
-std::cout << "Hello! Welcome to the game of life in CMPT 1109. What would you like to do?" << std::endl
-	<< "To display the initial state for the game of life press 1" << std::endl
-	<< "To load a new initial state from a CSV file into memory press 2" << std::endl
-	<< "To play the game of life with the current initial state press 3" << std::endl
-	<< "To report summary statistics on all games played press 4" << std::endl
-	<< "To randomly play the game multiple times press 5" << std::endl
-	<< "To output the best initial board press 6" << std::endl
-	<< "To quit the program press 7" << std::endl;
+	std::cout << "Hello! Welcome to the game of life in CMPT 1109. What would you like to do?" << std::endl
+		<< "To display the initial state for the game of life press 1" << std::endl
+		<< "To load a new initial state from a CSV file into memory press 2" << std::endl
+		<< "To play the game of life with the current initial state press 3" << std::endl
+		<< "To report summary statistics on all games played press 4" << std::endl
+		<< "To randomly play the game multiple times press 5" << std::endl
+		<< "To output the best initial board press 6" << std::endl
+		<< "To quit the program press 7" << std::endl;
 
-while (!(std::cin >> userSelection) || userSelection > 8 || userSelection < 1) {
-	std::cout << "Invalid input. Please enter an integer from 1-7." << std::endl;
-	std::cin.clear();
-	std::cin.ignore(1000, '\n');
-}
+	while (!(std::cin >> userSelection) || userSelection > 8 || userSelection < 1) {
+		std::cout << "Invalid input. Please enter an integer from 1-7." << std::endl;
+		std::cin.clear();
+		std::cin.ignore(1000, '\n');
+	}
 }
