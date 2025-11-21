@@ -35,7 +35,9 @@ void randomizeMultipleGames(int times, double odds);
 void summaryReport();
 void cleanupGameData();
 std::string askForFileName();
-void displayGameState(int cellArray[SIZE][SIZE]);
+void displayGameState(int cellArray[SIZE][SIZE], std::string cellFile);
+double askForOdds();
+void getBestBoardValue();
 
 int main() {
 
@@ -270,7 +272,7 @@ void summarizeResults(int arr[SIZE][SIZE], int arrOriginal[SIZE][SIZE], int year
 		arrRecord[gamesPlayed][1] = numAlive;
 		arrRecord[gamesPlayed][2] = numDead;
 		gamesPlayed++;
-		cout << "Years elasped: " << year << " Alive cells: " << numAlive
+		cout << "Years elapsed: " << year << " Alive cells: " << numAlive
 			<< " Dead cells: " << numDead;
 		return;
 	}
@@ -353,6 +355,9 @@ void cleanupPointers() {
 }
 
 void gameUI(int cellArray[SIZE][SIZE]) {
+
+	std::string cellFile = "cells.csv";
+
 	int userSelection = 0;
 
 	const char* menuOptions = R"(
@@ -372,18 +377,19 @@ void gameUI(int cellArray[SIZE][SIZE]) {
  )";
 
 	std::cout << menuOptions << std::endl << "> ";
+	std::cin >> userSelection;
+
 	//Input validation
-	while (!(std::cin >> userSelection) || userSelection > 7 || userSelection < 1) {
+	while (!cin || userSelection > 7 || userSelection < 1 || cin.peek() != '\n') {
 		std::cout << "Invalid input. Please enter an integer from 1-7." << std::endl << "> ";
 		std::cin.clear();
 		std::cin.ignore(1000, '\n');
 	}
 
 	switch (userSelection) {
-	case 1: {
-		displayGameState(cellArray);
-	}
-		  break;
+	case 1:
+		displayGameState(cellArray, cellFile);
+		break;
 	case 2:
 		readFromFile(cellArray, askForFileName());
 		break;
@@ -394,10 +400,13 @@ void gameUI(int cellArray[SIZE][SIZE]) {
 		summaryReport();
 		break;
 	case 5:
+		fillArray(cellArray, askForOdds());
 		break;
 	case 6:
+		getBestBoardValue();
 		break;
 	case 7:
+		std::cout << "Farewell!";
 		break;
 	}
 }
@@ -406,19 +415,34 @@ void cleanupGameData() {
 
 }
 
+// Asks user for the cell file - Alex
 std::string askForFileName() {
 	std::string userInput;
-	std::cout << "Enter file name: " << std::endl;
+	std::cout << "Enter file name: ";
 	std::cin >> userInput;
 	return userInput;
 }
 
-void displayGameState(int cellArray[SIZE][SIZE]) {
-	readFromFile(cellArray, "cells.csv");
+// Asks user for the odds they want - Alex
+double askForOdds() {
+	double userInput;
+	std::cout << "Please input preferred odds: ";
+	std::cin >> userInput;
+	return userInput;
+}
+
+// Outputs the current cell array - Alex
+void displayGameState(int cellArray[SIZE][SIZE], std::string cellFile) {
+	readFromFile(cellArray, cellFile);
 	for (int i = 0; i < SIZE; i++) {
 		for (int j = 0; j < SIZE; j++) {
 			std::cout << cellArray[i][j] << " ";
 		}
 		std::cout << std::endl;
 	}
+}
+
+void getBestBoardValue() {
+	getHighScoreArr();
+	getHighScoreData();
 }
