@@ -309,8 +309,32 @@ void summaryReport() {
 }
 
 //play multiple random games - Raine
-void randomizeMultipleGames(int times, double odds) {
+void randomizeMultipleGames(/*int times, double odds*/) {
 	static int ranArr[SIZE][SIZE] = { 0 };
+	int times = 0;
+	double odds = 0.0;
+
+	cout << "How many games do you want to play? (1 - 50)" << endl;
+	cin >> times;
+
+	while (!cin || times > 50 || times < 1 || cin.peek() != '\n') {
+		cout << "Invalid input. Please enter an integer from 1-50." << endl;
+		cout << "How many games do you want to play? (1 - 50)" << endl;
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cin >> times;
+	}
+
+	cout << "What are the odds that a cell starts alive? (0.0 - 1.0)" << endl;
+	cin >> odds;
+
+	while (!cin || odds > 1.0 || odds < 0.0) {
+		cout << "Invalid input. Please enter an decimal from 0.0-1.0." << endl;
+		cout << "What are the odds that a cell starts alive? (0.0 - 1.0)" << endl;
+		cin.clear();
+		cin.ignore(1000, '\n');
+		cin >> odds;
+	}
 
 	for (int i = 0; i < times; i++) {
 		fillArray(ranArr, odds);
