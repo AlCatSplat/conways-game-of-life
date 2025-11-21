@@ -1,5 +1,6 @@
 /*
 * Conway's game of life in C++. Created by Alex Kibret, Raine Wong, and Andy Xiao.
+* Version 2025.11.20
 */
 #include <iostream>
 #include <fstream>
@@ -16,11 +17,8 @@ const int TOTAL_VARIABLES = 3;
 const int GAMES_MAX = 200;
 const int YEARS_MAX = 30;
 
-const int GRID_SIZE = 30;
-int cells[GRID_SIZE][GRID_SIZE];
-
-void gameUI();
-void readFromFile(int cellArray[SIZE][SIZE]);
+void gameUI(int cellArray[SIZE][SIZE]);
+void readFromFile(int cellArray[SIZE][SIZE], std::string cellFile);
 double randomDouble();
 void fillArray(int array[SIZE][SIZE], double odds);
 int countSurroundingAlive(int arr[SIZE][SIZE], int row, int col);
@@ -36,10 +34,14 @@ void cleanupPointers();
 void randomizeMultipleGames(int times, double odds);
 void summaryReport();
 void cleanupGameData();
+std::string askForFileName();
+void displayGameState(int cellArray[SIZE][SIZE]);
 
-int main() {	
+int main() {
 
-	gameUI();
+	int cells[SIZE][SIZE];
+
+	gameUI(cells);
 
 	int (*arrHighScore)[SIZE] = getHighScoreArr();//intialize pointers for the array that results with the most alive (best array)
 	int (*arrRecord)[3] = getRecordData();//record of all games data
@@ -58,14 +60,17 @@ int main() {
 	return 0;
 }
 
-// TODO: Implement ability to read game state from CSV file
-void readFromFile(int cellArray[SIZE][SIZE]) {
+// Reads game state from CSV file
+void readFromFile(int cellArray[SIZE][SIZE], std::string cellFile) {
 
-	std::ifstream cellDataFile("cells.csv");
+	std::ifstream cellDataFile(cellFile);
 
 	if (!cellDataFile.is_open()) {
-		std::cout << "Error: Cannot open file." << std::endl;
+		std::cout << "Error: File not found." << std::endl;
 		return;
+	}
+	else {
+		std::cout << "File read successfully." << std::endl;
 	}
 
 	std::string line;
@@ -347,7 +352,7 @@ void cleanupPointers() {
 	return;
 }
 
-void gameUI() {
+void gameUI(int cellArray[SIZE][SIZE]) {
 	int userSelection = 0;
 
 	const char* menuOptions = R"(
@@ -375,20 +380,15 @@ void gameUI() {
 	}
 
 	switch (userSelection) {
-	case 1:
-		// Temporary testing solution
-		readFromFile(cells);
-		for (int i = 0; i < GRID_SIZE; i++) {
-			for (int j = 0; j < GRID_SIZE; j++) {
-				std::cout << cells[i][j] << " ";
-			}
-			std::cout << std::endl;
-		}
-		break;
+	case 1: {
+		displayGameState(cellArray);
+	}
+		  break;
 	case 2:
+		readFromFile(cellArray, askForFileName());
 		break;
 	case 3:
-		simYearSetUp(cells);
+		simYearSetUp(cellArray);
 		break;
 	case 4:
 		summaryReport();
@@ -404,4 +404,21 @@ void gameUI() {
 
 void cleanupGameData() {
 
+}
+
+std::string askForFileName() {
+	std::string userInput;
+	std::cout << "Enter file name: " << std::endl;
+	std::cin >> userInput;
+	return userInput;
+}
+
+void displayGameState(int cellArray[SIZE][SIZE]) {
+	readFromFile(cellArray, "cells.csv");
+	for (int i = 0; i < SIZE; i++) {
+		for (int j = 0; j < SIZE; j++) {
+			std::cout << cellArray[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
 }
